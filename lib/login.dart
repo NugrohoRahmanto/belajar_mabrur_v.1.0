@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             // Logo at the top (custom logo)
             const SizedBox(
-              height: 150,
+              height: 100,
               child: Image(
                 image: AssetImage('assets/images/logo.png'), // Path gambar logo Anda
                 fit: BoxFit.contain, // Menyesuaikan ukuran logo
