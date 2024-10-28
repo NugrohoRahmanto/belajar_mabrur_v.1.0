@@ -20,8 +20,18 @@ class _JoinPageState extends State<JoinPage> {
     return Scaffold(
       backgroundColor: Colors.white, // Set background color here
       appBar: AppBar(
-        title: const Text('Join Meeting'),
-        backgroundColor: Colors.white,
+        title: const Text(
+          'Join Meeting', // Judul di AppBar
+          style: TextStyle(
+            fontSize: 24, // Ukuran font besar
+            fontWeight: FontWeight.bold,
+            color: Color(0xFFA20E0E), // Warna merah untuk judul
+          ),
+        ),
+        centerTitle: true, // Judul di tengah
+        backgroundColor: Colors.white, // Warna putih untuk AppBar
+        elevation: 0, // Hilangkan bayangan
+        automaticallyImplyLeading: false, // Hilangkan tombol back
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

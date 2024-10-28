@@ -21,13 +21,6 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
 
-  // Titles for each page
-  static const List<String> _titles = [
-    'Home', // Judul untuk Home
-    'Join Meeting', // Judul untuk Join Meeting (tidak akan ditampilkan di AppBar)
-    'Account', // Judul untuk Account (tidak akan ditampilkan di AppBar)
-  ];
-
   // Widget options
   late List<Widget> _widgetOptions;
 
@@ -55,7 +48,7 @@ class _DashboardPageState extends State<DashboardPage> {
       appBar: _selectedIndex == 0 // AppBar hanya untuk Home
           ? AppBar(
               title: Text(
-                _titles[_selectedIndex], // Judul hanya untuk Home
+                "Home", // Judul hanya untuk Home
                 style: const TextStyle(
                   fontSize: 24, // Perbesar ukuran font
                   fontWeight: FontWeight.bold,

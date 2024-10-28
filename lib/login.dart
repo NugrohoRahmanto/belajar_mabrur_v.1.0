@@ -17,16 +17,19 @@ class _LoginPageState extends State<LoginPage> {
   String? _errorMessage;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white, // Set background color to white
-      body: Padding(
+  @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.white, // Set background color to white
+    body: SingleChildScrollView(  // Membungkus dengan SingleChildScrollView
+      child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(height: 150),
             const SizedBox(
-              height: 100,
+              height: 200,
               child: Image(
                 image: AssetImage('assets/images/logo.png'), // Path gambar logo Anda
                 fit: BoxFit.contain, // Menyesuaikan ukuran logo
@@ -56,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 60),
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(
@@ -118,8 +121,10 @@ class _LoginPageState extends State<LoginPage> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   // Function to handle login logic
   Future<void> _handleLogin() async {
@@ -153,14 +158,14 @@ class _LoginPageState extends State<LoginPage> {
             builder: (context) => DashboardPage(
               userId: username,
               role: role,
-              isHost: role == 'Host',
+              isHost: role == 'host' || role == 'Host',
             ),
           ),
         );
       } else if (response.statusCode == 401) {
         // Invalid credentials
         setState(() {
-          _errorMessage = 'Wrong username or password';
+          _errorMessage = 'Wrong password';
         });
       } else {
         setState(() {
