@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'join_page.dart'; // Import halaman Join
+import 'join_page.dart';
 import 'account_page.dart'; // Import halaman Account
 
 class DashboardPage extends StatefulWidget {
