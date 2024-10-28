@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // Untuk JSON decoding
 import 'dashboard.dart'; // Import dashboard
-
-// Daftar akun yang dikenali sebagai host dan audience
-Map<String, String> hostUsers = {
-  'host1': 'hostpass1',
-};
-
-Map<String, String> audienceUsers = {
-  'user1': 'pass1',
-  'user2': 'pass2',
-  'user3': 'pass3',
-};
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -34,7 +25,6 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo at the top (custom logo)
             const SizedBox(
               height: 100,
               child: Image(
@@ -43,7 +33,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20),
-            // Welcome text with "BelajarMabrur" in red and "Welcome! to" in black
             RichText(
               textAlign: TextAlign.center,
               text: const TextSpan(
@@ -68,10 +57,8 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 40),
-            // Username Field (accepts both letters and numbers)
             TextField(
               controller: _usernameController,
-              // keyboardType: TextInputType.text,
               decoration: InputDecoration(
                 labelText: 'Username',
                 prefixIcon: const Icon(Icons.person),
@@ -81,7 +68,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20),
-            // Password Field
             TextField(
               controller: _passwordController,
               obscureText: true,
@@ -93,15 +79,13 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            const SizedBox(height:20),
-            // Display error message if login fails
+            const SizedBox(height: 20),
             if (_errorMessage != null)
               Text(
                 _errorMessage!,
                 style: const TextStyle(color: Colors.red),
               ),
             const SizedBox(height: 20),
-            // Login button with red color #a20e0e
             SizedBox(
               width: double.infinity, // Set the width to full
               child: ElevatedButton(
@@ -124,7 +108,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20),
-            // Text "App developed by nextCode" below the login button
             const Text(
               'App developed by nextCode',
               style: TextStyle(
@@ -139,36 +122,54 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // Function to handle login logic
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
 
-    if (hostUsers.containsKey(username) && hostUsers[username] == password) {
-      // Login as host
+    if (username.isEmpty || password.isEmpty) {
       setState(() {
-        _errorMessage = null;
+        _errorMessage = 'Username and password are required';
       });
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DashboardPage(userId: username, role: 'Host', isHost: true), // Pindah ke dashboard dan kirim data akun
-        ),
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.60.231.209:5000/login'), // Ganti dengan URL API backend Anda
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': username,
+          'password': password,
+        }),
       );
-    } else if (audienceUsers.containsKey(username) && audienceUsers[username] == password) {
-      // Login as audience
+
+      if (response.statusCode == 200) {
+        // Jika login berhasil, parse data dan navigasikan ke dashboard
+        final data = json.decode(response.body);
+        String role = data['role']; // Mendapatkan role dari response API
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DashboardPage(
+              userId: username,
+              role: role,
+              isHost: role == 'Host',
+            ),
+          ),
+        );
+      } else if (response.statusCode == 401) {
+        // Invalid credentials
+        setState(() {
+          _errorMessage = 'Wrong username or password';
+        });
+      } else {
+        setState(() {
+          _errorMessage = 'Failed to login. Please try again.';
+        });
+      }
+    } catch (e) {
       setState(() {
-        _errorMessage = null;
-      });
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DashboardPage(userId: username, role: 'User', isHost: false), // Pindah ke dashboard dan kirim data akun
-        ),
-      );
-    } else {
-      // Login failed, show error message
-      setState(() {
-        _errorMessage = 'Invalid username or password';
+        _errorMessage = 'Error: $e';
       });
     }
   }
