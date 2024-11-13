@@ -15,10 +15,13 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   String? _errorMessage;
+  bool _isHide = true;
+  bool _isOnValidation = false;
 
   @override
   @override
 Widget build(BuildContext context) {
+
   return Scaffold(
     backgroundColor: Colors.white, // Set background color to white
     body: SingleChildScrollView(  // Membungkus dengan SingleChildScrollView
@@ -73,10 +76,15 @@ Widget build(BuildContext context) {
             const SizedBox(height: 20),
             TextField(
               controller: _passwordController,
-              obscureText: true,
+              obscureText: _isHide ? true : false,
               decoration: InputDecoration(
                 labelText: 'Password',
                 prefixIcon: const Icon(Icons.lock),
+                suffixIcon: IconButton(onPressed: () {
+                  setState(() {
+                    _isHide = !_isHide;
+                  });
+                }, icon: Icon(_isHide ? Icons.visibility_off : Icons.visibility)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -100,7 +108,7 @@ Widget build(BuildContext context) {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
+                child: _isOnValidation ? const CircularProgressIndicator() : const Text(
                   'Login',
                   style: TextStyle(
                     fontSize: 18,
@@ -128,19 +136,24 @@ Widget build(BuildContext context) {
 
   // Function to handle login logic
   Future<void> _handleLogin() async {
+    setState(() {
+      _isOnValidation = true;
+    });
+
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
 
     if (username.isEmpty || password.isEmpty) {
       setState(() {
         _errorMessage = 'Username and password are required';
+        _isOnValidation = false;
       });
       return;
     }
 
     try {
-      final response = await http.post(
-        Uri.parse('http://10.60.231.209:5000/login'), // Ganti dengan URL API backend Anda
+      final responseLogin = await http.post(
+        Uri.parse('http://192.168.18.11:3000/api/users/login'), // Update with your API URL
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'username': username,
@@ -148,24 +161,47 @@ Widget build(BuildContext context) {
         }),
       );
 
-      if (response.statusCode == 200) {
-        // Jika login berhasil, parse data dan navigasikan ke dashboard
-        final data = json.decode(response.body);
-        String role = data['role']; // Mendapatkan role dari response API
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DashboardPage(
-              userId: username,
-              role: role,
-              isHost: role == 'host' || role == 'Host',
-            ),
-          ),
+      if (responseLogin.statusCode == 200) {
+        // Login successful, proceed to fetch user details
+        final body = json.decode(responseLogin.body);
+        final user = body['data'];
+        final token = user['token'];
+
+        final responseUser = await http.get(
+          Uri.parse('http://192.168.18.11:3000/api/users/current'), // Update with your API URL
+          headers: {'Authorization': token},
         );
-      } else if (response.statusCode == 401) {
+
+        if (responseUser.statusCode == 200) {
+          // Successfully fetched user details
+          final userBody = json.decode(responseUser.body);
+          String role = userBody['data']['role'];
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DashboardPage(
+                userId: username,
+                role: role,
+                isHost: role.toLowerCase() == 'host',
+              ),
+            ),
+          );
+        } else if (responseUser.statusCode == 403) {
+          // Unauthorized access
+          setState(() {
+            _errorMessage = 'Access denied. You do not have permission.';
+          });
+        } else {
+          // Any other error
+          setState(() {
+            _errorMessage = 'Failed to fetch user details. Please try again.';
+          });
+        }
+      } else if (responseLogin.statusCode == 401) {
         // Invalid credentials
         setState(() {
-          _errorMessage = 'Wrong password';
+          _errorMessage = 'Wrong username or password';
         });
       } else {
         setState(() {
@@ -176,6 +212,11 @@ Widget build(BuildContext context) {
       setState(() {
         _errorMessage = 'Error: $e';
       });
+    } finally {
+      setState(() {
+        _isOnValidation = false;
+      });
     }
   }
+
 }
