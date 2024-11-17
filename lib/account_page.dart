@@ -1,14 +1,18 @@
+// lib/account_page.dart
 import 'package:flutter/material.dart';
-import 'login.dart';  // Import halaman login untuk navigasi setelah logout
+import 'api_service.dart'; // Import ApiService
+import 'login.dart'; // Import halaman login untuk navigasi setelah logout
 
 class AccountPage extends StatefulWidget {
   final String userId;
   final String role;
+  final String token; // Add token parameter
 
   const AccountPage({
     Key? key,
     required this.userId,
     required this.role,
+    required this.token, // Initialize token
   }) : super(key: key);
 
   @override
@@ -16,15 +20,37 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  final ApiService _apiService = ApiService(); // Create an instance of ApiService
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Initialize the controllers with example data
     _nameController.text = widget.userId; // Replace with actual user name
     _phoneController.text = widget.role; // Replace with actual phone number
+  }
+
+  // Function to handle logout
+  Future<void> _handleLogout() async {
+    final result = await _apiService.logout(widget.token);
+
+    if (result['success']) {
+      // Navigate to the login page and pass a success message
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(logoutSuccess: true),
+        ),
+      );
+    } else {
+      // Show error message if logout fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['error'] ?? 'Logout failed. Please try again.'),
+        ),
+      );
+    }
   }
 
   @override
@@ -32,51 +58,46 @@ class _AccountPageState extends State<AccountPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Account', // Judul di AppBar
+          'Account',
           style: TextStyle(
-            fontSize: 24, // Ukuran font besar
+            fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Color(0xFFA20E0E), // Warna merah untuk judul
+            color: Color(0xFFA20E0E),
           ),
         ),
-        centerTitle: true, // Judul di tengah
-        backgroundColor: Colors.white, // Warna putih untuk AppBar
-        elevation: 0, // Hilangkan bayangan
-        automaticallyImplyLeading: false, // Hilangkan tombol back
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(20.0), // Padding untuk keseluruhan halaman
+          padding: const EdgeInsets.all(20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, // Pusatkan secara vertikal
-            crossAxisAlignment: CrossAxisAlignment.center, // Pusatkan secara horizontal
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Full Name Field
               const Text(
                 'Username',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
-                  
                 ),
-                
               ),
-              const SizedBox(height: 10), // Jarak antara label dan text field
+              const SizedBox(height: 10),
               TextField(
                 enabled: false,
                 controller: _nameController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12), // Rounded corners
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: Colors.grey[200], // Light grey background for text field
+                  fillColor: Colors.grey[200],
                 ),
               ),
-              const SizedBox(height: 20), // Jarak antar field
-              
-              // Phone Number Field
+              const SizedBox(height: 20),
               const Text(
                 'Role',
                 style: TextStyle(
@@ -85,71 +106,58 @@ class _AccountPageState extends State<AccountPage> {
                   color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 10), // Jarak antara label dan text field
+              const SizedBox(height: 10),
               TextField(
                 enabled: false,
                 controller: _phoneController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12), // Rounded corners
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: Colors.grey[200], // Light grey background for text field
+                  fillColor: Colors.grey[200],
                 ),
               ),
-              const SizedBox(height: 40), // Jarak sebelum tombol Save
-
-              // Save Change Button
+              const SizedBox(height: 40),
               SizedBox(
-                width: double.infinity, // Tombol penuh lebar
-                height: 50, // Tinggi tombol
+                width: double.infinity,
+                height: 50,
                 child: ElevatedButton(
                   onPressed: () {
                     // Handle save changes action
-                    // Simpan nama dan nomor telepon yang diubah
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFA20E0E), // Warna merah tombol
+                    backgroundColor: const Color(0xFFA20E0E),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // Rounded button
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: const Text(
                     'Save change',
                     style: TextStyle(
-                      fontSize: 18, // Ukuran teks tombol
+                      fontSize: 18,
                       color: Colors.white,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20), // Jarak antara tombol Save dan Logout
-
-              // Logout Button
+              const SizedBox(height: 20),
               SizedBox(
-                width: double.infinity, // Tombol penuh lebar
-                height: 50, // Tinggi tombol
+                width: double.infinity,
+                height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Handle logout action
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ),
-                    );
-                  },
+                  onPressed: _handleLogout, // Call the logout function
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 197, 197, 197), // Warna abu-abu untuk tombol logout
+                    backgroundColor: const Color.fromARGB(255, 197, 197, 197),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // Rounded button
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: const Text(
                     'Logout',
                     style: TextStyle(
-                      fontSize: 18, // Ukuran teks tombol
-                      color: const Color(0xFFA20E0E),
+                      fontSize: 18,
+                      color: Color(0xFFA20E0E),
                     ),
                   ),
                 ),
@@ -158,7 +166,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
         ),
       ),
-      backgroundColor: Colors.white, // Warna background putih untuk halaman
+      backgroundColor: Colors.white,
     );
   }
 }
