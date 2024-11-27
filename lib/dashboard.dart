@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'join_page.dart';
-import 'account_page.dart'; // Import halaman Account
-import 'api_service.dart'; // Import ApiService for content fetching
+import 'account_page.dart';
+import 'api_service.dart';
 
 class DashboardPage extends StatefulWidget {
   final String userId;
@@ -10,15 +12,15 @@ class DashboardPage extends StatefulWidget {
   final String token;
 
   const DashboardPage({
-    Key? key,
+    super.key,
     required this.userId,
     required this.role,
     required this.isHost,
     required this.token,
-  }) : super(key: key);
+  });
 
   @override
-  _DashboardPageState createState() => _DashboardPageState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
 class _DashboardPageState extends State<DashboardPage> {
@@ -26,13 +28,13 @@ class _DashboardPageState extends State<DashboardPage> {
   final ApiService _apiService = ApiService(); // Create an instance of ApiService
   List<dynamic> _contents = []; // List to store content data
   bool _isLoading = true; // Loading state
-  String? _errorMessage; // Error message
-  List<bool> _isExpanded = []; // Initialize as an empty list
+  String? _errorMessage;
+  List<bool> _isExpanded = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchContents(); // Fetch contents when the page initializes
+    _fetchContents();
   }
 
   // Function to fetch contents
@@ -56,16 +58,16 @@ class _DashboardPageState extends State<DashboardPage> {
   // Function to build Home page
   Widget _buildHomePage() {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator()); // Show loading indicator
+      return Center(child: Platform.isIOS ? CupertinoActivityIndicator() : CircularProgressIndicator());
     }
 
     if (_errorMessage != null) {
       return Center(
         child: Text(
           _errorMessage!,
-          style: const TextStyle(color: Colors.red),
+          style: TextStyle(color: Platform.isIOS ? CupertinoColors.destructiveRed : Colors.red),
         ),
-      ); // Show error message if any
+      );
     }
 
     return ListView.builder(
@@ -79,15 +81,14 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           child: Container(
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 235, 235, 235), // Background color for the item (light gray)
-              borderRadius: BorderRadius.circular(30.0), // Rounded corners
+              color: Platform.isIOS ? CupertinoColors.systemGrey5 : Color.fromARGB(255, 235, 235, 235), // Different background color for iOS and Android
+              borderRadius: BorderRadius.circular(30.0),
             ),
-             // Set background color for the item (light gray)
-            padding: const EdgeInsets.all(5.0), // Add padding inside the container
+            padding: const EdgeInsets.all(5.0),
             child: ListTile(
               title: Text(
                 content['name'],
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               onTap: () {
                 setState(() {
@@ -96,35 +97,35 @@ class _DashboardPageState extends State<DashboardPage> {
               },
               subtitle: _isExpanded[index]
                   ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        Text(
-                          content['arabic'],
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          content['latin'],
-                          style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          content['translate_id'],
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Category: ${content['category']}',
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          content['description'],
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ],
-                    )
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  Text(
+                    content['arabic'],
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    content['latin'],
+                    style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    content['translate_id'],
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Category: ${content['category']}',
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    content['description'],
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ],
+              )
                   : null,
             ),
           ),
@@ -142,7 +143,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _widgetOptions = <Widget>[
-      _buildHomePage(), // Build Home page dynamically
+      _buildHomePage(),
       JoinPage(isHost: widget.isHost, userId: widget.userId),
       AccountPage(userId: widget.userId, role: widget.role, token: widget.token),
     ];
@@ -150,23 +151,44 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: _selectedIndex == 0
-          ? AppBar(
-              title: Text(
-                "Home",
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFA20E0E),
-                ),
-              ),
-              centerTitle: true,
-              backgroundColor: Colors.white,
-              elevation: 0,
-              automaticallyImplyLeading: false,
-            )
+          ? Platform.isIOS
+          ? const CupertinoNavigationBar(
+        middle: Text("Home", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        backgroundColor: CupertinoColors.white,
+      )
+          : AppBar(
+        title: const Text(
+          "Home",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFFA20E0E)),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+      )
           : null,
       body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: Platform.isIOS
+          ? CupertinoTabBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.add_circled),
+            label: 'Join',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.person),
+            label: 'Account',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        activeColor: Color(0xFFA20E0E),
+        onTap: _onItemTapped,
+      )
+          : BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

@@ -5,11 +5,13 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   // Base url (ubah url sesuai dengan server)
-  final String _baseUrl = 'http://192.168.56.1:3000/api';
+  final String _baseUrl = 'http://192.168.18.11:3000/api';
   final String _apiKey = 'gfijpcFdjZ5muSZ62kRCQet4ptgfrqqvfADVuKiblR84xXIB8C0urih3ywgrAwrdLbXCPTytmxfkMToGsq07UkgO065iV9H8VLeuW';
 
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
+      print('Login URL: ${Uri.parse('$_baseUrl/users/login')}');
+
       final responseLogin = await http.post(
         Uri.parse('$_baseUrl/users/login'),
         headers: {'Content-Type': 'application/json'},
@@ -18,6 +20,8 @@ class ApiService {
           'password': password,
         }),
       );
+
+      print(responseLogin);
 
       if (responseLogin.statusCode == 200) {
         final body = json.decode(responseLogin.body);
