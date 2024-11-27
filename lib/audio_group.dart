@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zego_uikit_prebuilt_live_audio_room/zego_uikit_prebuilt_live_audio_room.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AudioRoomPage extends StatelessWidget {
   final String roomId;
@@ -16,9 +17,8 @@ class AudioRoomPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Menggunakan App ID dan App Sign dari Zego
-    const int appID = 1304598235; // Ganti dengan App ID yang diberikan
-    const String appSign =
-        "79da482fcd637aa9285e9e7d80be187a58c1837024914ec46995d5472a99da5a"; // Ganti dengan App Sign yang diberikan
+    final int appID = int.parse(dotenv.env['APP_ID'] ?? '0000');
+    final String appSign = dotenv.env['APP_SIGN'] ?? 'default';
 
     // Menggunakan username sebagai userID yang unik
     final String userID = username;

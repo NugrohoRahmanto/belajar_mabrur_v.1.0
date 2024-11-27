@@ -1,12 +1,13 @@
-// lib/api_service.dart
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class ApiService {
   // Base url (ubah url sesuai dengan server)
-  final String _baseUrl = 'http://192.168.56.1:3000/api';
-  final String _apiKey = 'gfijpcFdjZ5muSZ62kRCQet4ptgfrqqvfADVuKiblR84xXIB8C0urih3ywgrAwrdLbXCPTytmxfkMToGsq07UkgO065iV9H8VLeuW';
+  final String _baseUrl = dotenv.env['API_URL'] ?? 'http://127.0.0.1/api';
+  final String _apiKey = dotenv.env['API_KEY'] ?? 'test';
 
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
@@ -56,6 +57,7 @@ class ApiService {
   Future<Map<String, dynamic>> getContents() async {
     print('Fetching contents...');
     try {
+      
       final response = await http.get(
         Uri.parse('$_baseUrl/contents'),
         headers: {
@@ -69,6 +71,7 @@ class ApiService {
         return {'success': true, 'data': body['data']};
       } else {
         print('Failed to fetch contents. Status code: ${response.statusCode}');
+        print('Fetching contents2');
         return {'success': false, 'error': 'Failed to fetch contents. Please try again.'};
       }
     } catch (e) {
