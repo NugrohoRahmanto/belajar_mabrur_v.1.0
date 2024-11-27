@@ -162,7 +162,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               const SizedBox(height: 8),
                               Text(
                                 content['arabic'],
-                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 8),
                               Text(
