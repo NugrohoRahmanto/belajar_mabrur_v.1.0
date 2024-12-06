@@ -31,7 +31,7 @@ class _DashboardPageState extends State<DashboardPage> {
   List<bool> _isExpanded = []; // Initialize as an empty list
 
   // List of available categories for filtering
-  List<String> _categories = ['Ihram', "Sa'i", 'Tahallul', 'Thawaf']; 
+  List<String> _categories = ['Ihram', 'Thawaf', "Sa'i", 'Tahallul' ]; 
   String _selectedCategory = ''; // Store selected category
 
   @override
