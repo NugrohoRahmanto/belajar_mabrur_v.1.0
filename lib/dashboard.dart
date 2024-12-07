@@ -31,7 +31,7 @@ class _DashboardPageState extends State<DashboardPage> {
   List<bool> _isExpanded = []; // Initialize as an empty list
 
   // List of available categories for filtering
-  List<String> _categories = ['Ihram', 'Thawaf', "Sa'i", 'Tahallul' ]; 
+  List<String> _categories = ['All','Ihram', 'Thawaf', "Sa'i", 'Tahallul' ]; 
   String _selectedCategory = ''; // Store selected category
 
   @override
@@ -63,7 +63,7 @@ class _DashboardPageState extends State<DashboardPage> {
   void _filterContents(String category) {
     setState(() {
       _selectedCategory = category;
-      if (category.isEmpty) {
+      if (category.isEmpty || category == 'all') {
         // Show all content if no category is selected
         _filteredContents = _contents;
       } else {
@@ -135,14 +135,14 @@ class _DashboardPageState extends State<DashboardPage> {
             itemBuilder: (context, index) {
               final content = _filteredContents[index];
               return Card(
-                margin: const EdgeInsets.all(8.0),
+                margin: const EdgeInsets.only(left: 14.0, right: 14.0, bottom: 8.0, top: 3),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 235, 235, 235), // Background color for the item (light gray)
-                    borderRadius: BorderRadius.circular(30.0), // Rounded corners
+                    color: const Color.fromARGB(255, 245, 245, 245), // Background color for the item (light gray)
+                    borderRadius: BorderRadius.circular(15.0), // Rounded corners
                   ),
                   padding: const EdgeInsets.all(5.0), // Add padding inside the container
                   child: ListTile(
@@ -207,7 +207,7 @@ class _DashboardPageState extends State<DashboardPage> {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: _selectedIndex == 0
           ? AppBar(
               title: Text(
@@ -219,7 +219,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               centerTitle: true,
-              backgroundColor: Colors.white,
+              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
               elevation: 0,
               automaticallyImplyLeading: false,
             )
