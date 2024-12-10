@@ -32,6 +32,12 @@ class AudioRoomPage extends StatelessWidget {
       ZegoLiveAudioRoomMenuBarButtonName.pipButton
     ]; // Audience hanya mendengarkan
 
+    // Menambahkan tombol minimisasi ke dalam konfigurasi top menu
+    roomConfig.topMenuBar.buttons = [
+      ZegoLiveAudioRoomMenuBarButtonName.minimizingButton,
+    ];
+
+
     return SafeArea(
       child: ZegoUIKitPrebuiltLiveAudioRoom(
         appID: appID,
@@ -39,8 +45,37 @@ class AudioRoomPage extends StatelessWidget {
         userID: userID, // UserID harus unik untuk setiap pengguna
         userName: username,
         roomID: roomId,
-        config: roomConfig, // Konfigurasi berdasarkan apakah host atau audience
+        config: roomConfig // Konfigurasi berdasarkan apakah host atau audience
+          ..background = background(),
       ),
+    );
+  }
+
+  // Method untuk background dengan text overlay
+  Widget background() {
+    return Stack(
+      children: [
+        // Background dengan warna solid (misalnya biru muda)
+        Container(
+          color: const Color(0xBF3131) // Ganti dengan warna yang diinginkan
+        ),
+        // Text overlay pada bagian atas
+
+        Positioned(
+          top: 10,
+          left: 10,
+          bottom: 100,
+          child: Text(
+            "Room ID: $roomId",
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color.fromARGB(255, 255, 255, 255),
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

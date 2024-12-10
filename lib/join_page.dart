@@ -43,6 +43,10 @@ class _JoinPageState extends State<JoinPage> {
               'Enter Room ID to Join the Meeting',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
+            const Text(
+              'Masukkan room ID untuk masuk',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+            ),
             const SizedBox(height: 20),
             TextField(
               controller: _roomIdController,

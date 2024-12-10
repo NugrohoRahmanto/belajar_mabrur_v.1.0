@@ -118,29 +118,7 @@ class _AccountPageState extends State<AccountPage> {
                   fillColor: Colors.grey[200],
                 ),
               ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle save changes action
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFA20E0E),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    'Save change',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
+              
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -148,7 +126,7 @@ class _AccountPageState extends State<AccountPage> {
                 child: ElevatedButton(
                   onPressed: _handleLogout, // Call the logout function
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 197, 197, 197),
+                    backgroundColor: const Color(0xFFA20E0E),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -157,7 +135,7 @@ class _AccountPageState extends State<AccountPage> {
                     'Logout',
                     style: TextStyle(
                       fontSize: 18,
-                      color: Color(0xFFA20E0E),
+                      color: Color.fromARGB(255, 255, 255, 255),
                     ),
                   ),
                 ),

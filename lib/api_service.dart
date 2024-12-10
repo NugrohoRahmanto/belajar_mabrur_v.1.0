@@ -1,8 +1,6 @@
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 
 class ApiService {
   // Base url (ubah url sesuai dengan server)
@@ -39,14 +37,23 @@ class ApiService {
             'token': token,
           };
         } else if (responseUser.statusCode == 403) {
-          return {'success': false, 'error': 'Access denied. You do not have permission.'};
+          return {
+            'success': false,
+            'error': 'Access denied. You do not have permission.'
+          };
         } else {
-          return {'success': false, 'error': 'Failed to fetch user details. Please try again.'};
+          return {
+            'success': false,
+            'error': 'Failed to fetch user details. Please try again.'
+          };
         }
       } else if (responseLogin.statusCode == 401) {
         return {'success': false, 'error': 'Wrong username or password'};
       } else {
-        return {'success': false, 'error': 'Failed to login. Please try again.'};
+        return {
+          'success': false,
+          'error': 'Failed to login. Please try again.'
+        };
       }
     } catch (e) {
       return {'success': false, 'error': 'Error: $e'};
@@ -57,12 +64,11 @@ class ApiService {
   Future<Map<String, dynamic>> getContents() async {
     print('Fetching contents...');
     try {
-      
       final response = await http.get(
         Uri.parse('$_baseUrl/contents'),
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': '$_apiKey', 
+          'x-api-key': '$_apiKey',
         },
       );
 
@@ -72,13 +78,17 @@ class ApiService {
       } else {
         print('Failed to fetch contents. Status code: ${response.statusCode}');
         print('Fetching contents2');
-        return {'success': false, 'error': 'Failed to fetch contents. Please try again.'};
+        return {
+          'success': false,
+          'error': 'Failed to fetch contents. Please try again.'
+        };
       }
     } catch (e) {
       print('Error: $e');
       return {'success': false, 'error': 'Error: $e'};
     }
   }
+
   // Function to handle logout
   Future<Map<String, dynamic>> logout(String token) async {
     try {
@@ -93,7 +103,41 @@ class ApiService {
       if (response.statusCode == 200) {
         return {'success': true};
       } else {
-        return {'success': false, 'error': 'Failed to logout. Please try again.'};
+        return {
+          'success': false,
+          'error': 'Failed to logout. Please try again.'
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'error': 'Error: $e'};
+    }
+  }
+
+  Future<Map<String, dynamic>> register(
+      String username, String name, String password) async {
+    try {
+      final responseRegister = await http.post(
+        Uri.parse('$_baseUrl/users'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': username,
+          'name': name,
+          'password': password,
+        }),
+      );
+
+      if (responseRegister.statusCode == 200) {
+        return {
+          'success': true,
+          'message': 'Successfully register new account'
+        };
+      } else if (responseRegister.statusCode == 400) {
+        return {'success': false, 'error': 'Account already exists'};
+      } else {
+        return {
+          'success': false,
+          'error': 'Failed to login. Please try again.'
+        };
       }
     } catch (e) {
       return {'success': false, 'error': 'Error: $e'};
