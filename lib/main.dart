@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'login.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 
-void main() {
+void main()async  {
+  // await dotenv.load(); 
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -11,6 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      
       title: 'BelajarMabrur',
       theme: ThemeData(
         primarySwatch: Colors.blue,

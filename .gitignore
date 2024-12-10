@@ -45,3 +45,4 @@ app.*.map.json
 
 
 /android/app/build/outputs/apk/debug/*.apk
+*.env
