@@ -63,7 +63,7 @@ class _DashboardPageState extends State<DashboardPage> {
   void _filterContents(String category) {
     setState(() {
       _selectedCategory = category;
-      if (category.isEmpty || category == 'all') {
+      if (category.isEmpty || category == 'All') {
         // Show all content if no category is selected
         _filteredContents = _contents;
       } else {

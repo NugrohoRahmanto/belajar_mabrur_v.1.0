@@ -53,7 +53,7 @@ class AudioRoomPage extends StatelessWidget {
       children: [
         // Background dengan warna solid (misalnya biru muda)
         Container(
-          color: const Color(0xBF3131) // Ganti dengan warna yang diinginkan
+          color: const Color.fromARGB(255, 204, 73, 89), // Ganti dengan warna yang diinginkan
         ),
         // Text overlay pada bagian atas
         
@@ -66,7 +66,7 @@ class AudioRoomPage extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               color: Color.fromARGB(255, 255, 255, 255),
-              fontSize: 17,
+              fontSize: 12,
               fontWeight: FontWeight.w700,
             ),
           ),
