@@ -26,13 +26,17 @@ class AudioRoomPage extends StatelessWidget {
     // Konfigurasi room sesuai dengan apakah host atau audience
     final roomConfig = isHost
         ? ZegoUIKitPrebuiltLiveAudioRoomConfig.host() // Host memiliki hak siaran
-        : ZegoUIKitPrebuiltLiveAudioRoomConfig.audience(); // Audience hanya mendengarkan
+        : ZegoUIKitPrebuiltLiveAudioRoomConfig.audience()
+    ..pip.enableWhenBackground = true
+    ..topMenuBar.buttons = [
+      ZegoLiveAudioRoomMenuBarButtonName.pipButton
+    ]; // Audience hanya mendengarkan
 
     // Menambahkan tombol minimisasi ke dalam konfigurasi top menu
     roomConfig.topMenuBar.buttons = [
       ZegoLiveAudioRoomMenuBarButtonName.minimizingButton,
     ];
-    
+
 
     return SafeArea(
       child: ZegoUIKitPrebuiltLiveAudioRoom(
@@ -56,7 +60,7 @@ class AudioRoomPage extends StatelessWidget {
           color: const Color.fromARGB(255, 204, 73, 89), // Ganti dengan warna yang diinginkan
         ),
         // Text overlay pada bagian atas
-        
+
         Positioned(
           top: 10,
           left: 10,
