@@ -140,20 +140,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const RegisterPage()));
-                },
-                child: const Text(
-                  'Create new account',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFFA20E0E),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
               const Text(
                 'App developed by nextCode',
                 style: TextStyle(

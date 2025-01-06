@@ -23,6 +23,7 @@ class AudioRoomPage extends StatelessWidget {
     // Menggunakan username sebagai userID yang unik
     final String userID = username;
 
+
     // Konfigurasi room sesuai dengan apakah host atau audience
     final roomConfig = isHost
         ? ZegoUIKitPrebuiltLiveAudioRoomConfig.host() // Host memiliki hak siaran
@@ -57,7 +58,7 @@ class AudioRoomPage extends StatelessWidget {
       children: [
         // Background dengan warna solid (misalnya biru muda)
         Container(
-          color: const Color.fromARGB(255, 204, 73, 89), // Ganti dengan warna yang diinginkan
+          color: const Color.fromARGB(255, 75, 75, 75), // Ganti dengan warna yang diinginkan
         ),
         // Text overlay pada bagian atas
 
