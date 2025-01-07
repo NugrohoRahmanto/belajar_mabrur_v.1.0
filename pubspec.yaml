@@ -68,7 +68,6 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/splash_screen.png
-    - assets/images/Profile.png
     - .env
 
   #   - images/a_dot_ham.jpeg
