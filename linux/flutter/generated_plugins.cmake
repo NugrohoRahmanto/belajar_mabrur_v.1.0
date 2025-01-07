@@ -3,8 +3,6 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  gtk
-  url_launcher_linux
   zego_express_engine
 )
 
