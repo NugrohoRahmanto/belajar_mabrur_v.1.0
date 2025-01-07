@@ -10,7 +10,8 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
-  
+  HttpOverrides.global = MyHttpOverrides();
+
   runApp(MyApp());
 }
 
