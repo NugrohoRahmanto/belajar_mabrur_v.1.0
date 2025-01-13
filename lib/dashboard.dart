@@ -148,7 +148,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   child: ListTile(
                     title: Text(
                       content['name'],
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     onTap: () {
                       setState(() {
@@ -167,12 +167,12 @@ class _DashboardPageState extends State<DashboardPage> {
                               const SizedBox(height: 8),
                               Text(
                                 content['latin'],
-                                style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+                                style: const TextStyle(fontSize: 22, fontStyle: FontStyle.italic),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 content['translate_id'],
-                                style: const TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 22),
                               ),
                               const SizedBox(height: 8),
                               Text(
