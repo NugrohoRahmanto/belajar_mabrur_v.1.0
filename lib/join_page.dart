@@ -75,13 +75,14 @@ class _JoinPageState extends State<JoinPage> {
                   setState(() {
                     _errorMessage = null;
                   });
+                  print('START');
                   // Navigate to the Audio Room page with the given room ID
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => AudioRoomPage(
                         roomId: roomId,
-                        username: widget.userId, // Menggunakan userId dari widget
+                        username: widget.userId.replaceAll(' ', ''), // Menggunakan userId dari widget
                         isHost: widget.isHost, // Menggunakan isHost dari widget
                       ),
                     ),

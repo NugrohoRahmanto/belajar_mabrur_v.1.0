@@ -1,11 +1,10 @@
-// lib/login.dart
-import 'package:app_bm/register.dart';
 import 'package:flutter/material.dart';
-import 'dashboard.dart'; // Import dashboard
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dashboard.dart';
 import 'api_service.dart';
 
 class LoginPage extends StatefulWidget {
-  final bool logoutSuccess; // Add a parameter to check for successful logout
+  final bool logoutSuccess;
 
   const LoginPage({Key? key, this.logoutSuccess = false}) : super(key: key);
 
@@ -21,16 +20,33 @@ class _LoginPageState extends State<LoginPage> {
   String? _errorMessage;
   bool _isHide = true;
   bool _isOnValidation = false;
+  bool _rememberMe = false; // Tambahkan variabel remember me
 
   @override
   void initState() {
     super.initState();
-    // Show a success message if the user has logged out
+    _loadSavedCredentials();
     if (widget.logoutSuccess) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('You have successfully logged out.')),
         );
+      });
+    }
+  }
+
+  // Fungsi untuk memuat data login tersimpan
+  Future<void> _loadSavedCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedUsername = prefs.getString('username') ?? '';
+    final savedPassword = prefs.getString('password') ?? '';
+    final rememberMe = prefs.getBool('rememberMe') ?? false;
+
+    if (rememberMe) {
+      setState(() {
+        _usernameController.text = savedUsername;
+        _passwordController.text = savedPassword;
+        _rememberMe = true;
       });
     }
   }
@@ -101,8 +117,9 @@ class _LoginPageState extends State<LoginPage> {
                         _isHide = !_isHide;
                       });
                     },
-                    icon:
-                        Icon(_isHide ? Icons.visibility_off : Icons.visibility),
+                    icon: Icon(
+                      _isHide ? Icons.visibility_off : Icons.visibility,
+                    ),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -110,6 +127,20 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Checkbox(
+                    value: _rememberMe,
+                    onChanged: (value) {
+                      setState(() {
+                        _rememberMe = value ?? false;
+                      });
+                    },
+                  ),
+                  const Text('Remember Me'),
+                ],
+              ),
               if (_errorMessage != null)
                 Text(
                   _errorMessage!,
@@ -130,13 +161,13 @@ class _LoginPageState extends State<LoginPage> {
                   child: _isOnValidation
                       ? const CircularProgressIndicator()
                       : const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+                    'Login',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -154,7 +185,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Function to handle login logic
   Future<void> _handleLogin() async {
     setState(() {
       _isOnValidation = true;
@@ -174,6 +204,16 @@ class _LoginPageState extends State<LoginPage> {
     final result = await _apiService.login(username, password);
 
     if (result['success']) {
+      if (_rememberMe) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('username', username);
+        await prefs.setString('password', password);
+        await prefs.setBool('rememberMe', true);
+      } else {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+      }
+
       final role = result['role'];
       Navigator.push(
         context,

@@ -31,8 +31,10 @@ class _DashboardPageState extends State<DashboardPage> {
   List<bool> _isExpanded = []; // Initialize as an empty list
 
   // List of available categories for filtering
-  List<String> _categories = ['All','Ihram', 'Thawaf', "Sa'i", 'Tahallul' ]; 
+  List<String> _categories = ['All', 'Ihram', 'Thawaf', "Sa'i", 'Tahallul'];
   String _selectedCategory = ''; // Store selected category
+
+  String _searchQuery = ""; // Store the search query
 
   @override
   void initState() {
@@ -63,13 +65,18 @@ class _DashboardPageState extends State<DashboardPage> {
   void _filterContents(String category) {
     setState(() {
       _selectedCategory = category;
-      if (category.isEmpty || category == 'All') {
-        // Show all content if no category is selected
-        _filteredContents = _contents;
-      } else {
-        // Filter content by category
-        _filteredContents = _contents.where((content) => content['category'] == category).toList();
-      }
+      _applyFilters();
+    });
+  }
+
+  // Function to apply search and category filters
+  void _applyFilters() {
+    setState(() {
+      _filteredContents = _contents.where((content) {
+        final matchesCategory = _selectedCategory.isEmpty || _selectedCategory == 'All' || content['category'] == _selectedCategory;
+        final matchesSearch = _searchQuery.isEmpty || content['name'].toLowerCase().contains(_searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      }).toList();
     });
   }
 
@@ -91,6 +98,25 @@ class _DashboardPageState extends State<DashboardPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Search Bar
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Search...',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: const BorderSide(color: Color(0xFFA20E0E)),
+              ),
+            ),
+            onChanged: (query) {
+              _searchQuery = query;
+              _applyFilters();
+            },
+          ),
+        ),
+
         // Display filter options (categories)
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -105,22 +131,21 @@ class _DashboardPageState extends State<DashboardPage> {
                     child: Text(category),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _selectedCategory == category
-                          ? const Color(0xFFA20E0E) // Warna merah saat dipilih
-                          : Colors.white, // Warna putih saat tidak dipilih
+                          ? const Color(0xFFA20E0E) // Red color when selected
+                          : Colors.white, // White color when not selected
                       foregroundColor: _selectedCategory == category
-                          ? Colors.white // Warna putih untuk teks saat dipilih
-                          : const Color(0xFFA20E0E), // Warna merah untuk teks saat tidak dipilih
+                          ? Colors.white // White text color when selected
+                          : const Color(0xFFA20E0E), // Red text color when not selected
                       side: BorderSide(
                         color: _selectedCategory == category
-                            ? const Color(0xFFA20E0E) // Border merah saat dipilih
-                            : const Color(0xFFA20E0E).withOpacity(0.3), // Border merah dengan opacity saat tidak dipilih
-                        width: 2.0, // Ketebalan border
+                            ? const Color(0xFFA20E0E) // Red border when selected
+                            : const Color(0xFFA20E0E).withOpacity(0.3), // Red border with opacity when not selected
+                        width: 2.0, // Border thickness
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0), // Membuat tombol dengan sudut membulat
+                        borderRadius: BorderRadius.circular(30.0), // Rounded corners for the button
                       ),
                     ),
-
                   ),
                 );
               }).toList(),
@@ -157,30 +182,30 @@ class _DashboardPageState extends State<DashboardPage> {
                     },
                     subtitle: _isExpanded[index]
                         ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 8),
-                              Text(
-                                content['arabic'],
-                                style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                content['latin'],
-                                style: const TextStyle(fontSize: 22, fontStyle: FontStyle.italic),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                content['translate_id'],
-                                style: const TextStyle(fontSize: 22),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                "\n"+content['description'],
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          )
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 8),
+                        Text(
+                          content['arabic'],
+                          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          content['latin'],
+                          style: const TextStyle(fontSize: 22, fontStyle: FontStyle.italic),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          content['translate_id'],
+                          style: const TextStyle(fontSize: 22),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "\n" + content['description'],
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    )
                         : null,
                   ),
                 ),
@@ -210,19 +235,19 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: _selectedIndex == 0
           ? AppBar(
-              title: Text(
-                "Home",
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFA20E0E),
-                ),
-              ),
-              centerTitle: true,
-              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-              elevation: 0,
-              automaticallyImplyLeading: false,
-            )
+        title: Text(
+          "Home",
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFFA20E0E),
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        elevation: 0,
+        automaticallyImplyLeading: false,
+      )
           : null,
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(

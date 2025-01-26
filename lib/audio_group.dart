@@ -38,6 +38,11 @@ class AudioRoomPage extends StatelessWidget {
       ZegoLiveAudioRoomMenuBarButtonName.minimizingButton,
     ];
 
+    print('username: $username');
+    print('App Id: $appID');
+    print('App Sign: $appSign');
+    print('Room Id: $roomId');
+    print('User Id: $userID');
 
     return SafeArea(
       child: ZegoUIKitPrebuiltLiveAudioRoom(
